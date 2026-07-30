@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gameready"
+version = "0.1.0"
+description = "A deterministic reference kernel for an AI-native self-healing game runtime"
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "Proprietary" }
+authors = [{ name = "GameReady Contributors" }]
+dependencies = []
+
+[project.scripts]
+gameready = "gameready.cli:main"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]

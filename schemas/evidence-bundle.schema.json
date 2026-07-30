@@ -1,0 +1,260 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gameready.local/schemas/evidence-bundle.schema.json",
+  "title": "GameReady Evidence Bundle",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "config",
+    "engine_version",
+    "events",
+    "final_health",
+    "final_state_hash",
+    "format_version",
+    "incident_id",
+    "initial_state_hash",
+    "scenario",
+    "trace_digest",
+    "violations"
+  ],
+  "properties": {
+    "format_version": {
+      "const": "gameready.evidence.v1"
+    },
+    "incident_id": {
+      "type": "string",
+      "pattern": "^inc-[0-9a-f]{20}$"
+    },
+    "engine_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "config": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["damage_policy"],
+      "properties": {
+        "damage_policy": {
+          "enum": ["naive", "idempotent_by_effect_id"]
+        }
+      }
+    },
+    "initial_state_hash": {
+      "$ref": "#/$defs/sha256"
+    },
+    "final_state_hash": {
+      "$ref": "#/$defs/sha256"
+    },
+    "trace_digest": {
+      "$ref": "#/$defs/sha256"
+    },
+    "final_health": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 0
+      }
+    },
+    "scenario": {
+      "$ref": "#/$defs/scenario"
+    },
+    "events": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/event"
+      }
+    },
+    "violations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/violation"
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "entity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["entity_id", "health"],
+      "properties": {
+        "entity_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "health": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "command": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "amount",
+        "delivery",
+        "effect_id",
+        "source_entity",
+        "target_entity",
+        "tick"
+      ],
+      "properties": {
+        "amount": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "delivery": {
+          "type": "string",
+          "minLength": 1
+        },
+        "effect_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_entity": {
+          "type": "string",
+          "minLength": 1
+        },
+        "target_entity": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tick": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "scenario": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "commands",
+        "entities",
+        "expected_health",
+        "name",
+        "seed"
+      ],
+      "properties": {
+        "commands": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/command"
+          }
+        },
+        "entities": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/entity"
+          }
+        },
+        "expected_health": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "seed": {
+          "type": "integer"
+        }
+      }
+    },
+    "event": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "data",
+        "effect_id",
+        "kind",
+        "seq",
+        "source_entity",
+        "state_hash",
+        "target_entity",
+        "tick"
+      ],
+      "properties": {
+        "data": {
+          "type": "object"
+        },
+        "effect_id": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "command.received",
+            "effect.applied",
+            "effect.rejected"
+          ]
+        },
+        "seq": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "source_entity": {
+          "type": "string"
+        },
+        "state_hash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "target_entity": {
+          "type": "string"
+        },
+        "tick": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "violation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "code",
+        "effect_id",
+        "event_seq",
+        "invariant_id",
+        "message",
+        "related_event_seqs",
+        "tick"
+      ],
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "effect_id": {
+          "type": "string"
+        },
+        "event_seq": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "invariant_id": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "related_event_seqs": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "tick": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    }
+  }
+}
